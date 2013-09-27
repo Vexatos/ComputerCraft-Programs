@@ -1,5 +1,7 @@
---local mon = peripheral.wrap("top")
---mon.setTextScale(1)
+--edit of the button API to work with computer screens
+--reacts via mouseclick (event,mousebutton,x,y = os.pullEvent("mouse_click")
+--edited by Vexatos
+
 term.setTextColor(colors.white)
 local button={}
 term.setBackgroundColor(colors.black)

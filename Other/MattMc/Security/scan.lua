@@ -1,3 +1,6 @@
+--scan program, adapted from the scan program by direwolf20
+--gets permission file from a website like pastebin or github
+--edited by Vexatos
 local scanSide = "left"
 local projSide = "right"
 local doorSec = 1
