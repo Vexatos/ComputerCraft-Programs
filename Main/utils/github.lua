@@ -1,4 +1,4 @@
---edit of the pastebin program, edited by Vexatos
+--edit of the pastebin program to get stuff from Github, edited by Vexatos
 local function printUsage()
     print( "Usages:" )
     print( "github get <username> <reponame> <branch> <path> <filename>" )
