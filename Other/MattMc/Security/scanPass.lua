@@ -298,7 +298,7 @@ while shutdwn == false do
   if Sshutdwn == true then
     clearBar()
     term.write("Enter Password: ")
-    local Ppassw = io.read()
+    local Ppassw = io.read("*")
     if Ppassw == password then
       shutdwn = true
       clearBar()
