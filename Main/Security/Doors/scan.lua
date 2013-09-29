@@ -1,16 +1,26 @@
 --scan program, adapted from the scan program by direwolf20
 --gets permission file from a website like pastebin or github
 --edited by Vexatos
-local scanSide = "left"
-local projSide = "right"
-local doorSec = 1
-local scanPath = "z"
-local pasteLink = "https://raw.github.com/matthewsmeets/ComputerCraft/master/AwesomeSauce/Doors/perms/"
-local permFile = "perms"
 
---Not yet implemented
---local password = "secretpassword"
---local passkey = 183
+--The side of the OpenPeripheral sensor
+local scanSide = "left"
+--The side where Redstone will be sent to
+local projSide = "right"
+--The security level of the door
+local doorSec = 1
+--The axis in which the Sensor shall 'look' for players
+local scanPath = "z"
+-- The remote file in which the permissions are set
+local pasteLink = "https://raw.github.com/matthewsmeets/ComputerCraft/master/AwesomeSauce/Doors/perms/"
+--How the file with the permissions shall be called
+local permFile = "perms"
+--The time when the program starts without a button click, default 10
+local autoStart = 10
+--The time between each check for players, default 0.025
+local checkTime = 0.025
+
+
+--The code, nothing else to edit from here on.
 
 p = peripheral.wrap(scanSide)
 redstone.setOutput(projSide, true)
@@ -25,7 +35,7 @@ function getDatabase(pasteLink2,fileName)
   Dfile.close()
 end
 
---Gets The Database And Puts It In A Array
+--Gets The Database And Puts It Into an Array
  function load(permsFile)
  file = fs.open(permsFile,"r")
  dat = file.readAll()
@@ -122,6 +132,7 @@ function checkxy(x, y)
 end
      
 function heading(headText)
+   term.setCursorPos(1,1)
    w, h = term.getSize()
    term.setCursorPos((w-string.len(headText))/2+1, 1)
    term.write(headText)
@@ -163,7 +174,15 @@ function checkAccess(secLevel)
    return(false)
 end
 
+function clearAll()
+  term.clear()
+  term.setCursorPos(0,0)
+end
+
 function scan(tblName)
+   term.clear()
+   term.setCursorPos(1,1)
+   print("Scanning...")
    local players = p.getPlayerNames()
    local playerAccess
    for num,name in pairs(players) do
@@ -174,11 +193,6 @@ function scan(tblName)
        end
      end
    end
-end
-
-function clearAll()
-  term.clear()
-  term.setCursorPos(0,0)
 end
 
 function RelYes()
@@ -202,33 +216,36 @@ function RelExit()
 flash("Exit")
 clicked = 1
 clearAll()
+redstone.setOutput(projSide, true)
 os.queueEvent("terminate")
 sleep(0)
 end
 
 clearAll()
 if fs.exists(permFile) == true then
-  heading("Do you want to update the permission file?")
   setTable("Yes",RelYes,nil,10,20,6,10)
   setTable("No",RelNo,nil,30,40,6,10)
   setTable("Exit",RelExit,nil,0,8,17,19)
   clearAll()
   clicked = 0
-  os.startTimer(10)
+  timer1 = os.startTimer(autoStart)
   repeat
+    heading("Do you want to update the permission file?")
     screen()
     local Bbut = 0
     local Bclicked = 0
     repeat
-    event,but,xPos,yPos = os.pullEvent()
+    event,but,xPos,yPos = os.pullEventRaw()
     if event == "mouse_click" then
       if but == 1 then
         Bbut = 1
       end
     elseif event == "timer" then
-      RelNo()
-      Bbut = 2
-      Bclicked == 1
+      if but == timer1 then
+        RelNo()
+        Bbut = 2
+        Bclicked = 1
+      end
     end
     until Bbut ~= 0
     if Bbut == 1 then
@@ -244,30 +261,7 @@ end
 
 loadTbl = load(permFile)
 print("Scanning...")
---function mainProg()
   while true do
     scan(loadTbl)
-    sleep(0.025)
+    sleep(checkTime)
   end
---end
-
---This does not work yet
---function shut()
---  local shutV = 0
---  repeat
---    repeat
---      event,key = os.pullEventRaw("key")
---    until key == passkey
---      clearAll()
---      write("Enter Password: ")
---      passV = io.read()
---      if passV == password then
---        clicked = 1
---        shutV = 1
---        error()
---        return
---      end
---  until shutV == 1
---end
-
---parallel.waitForAny(mainProg,shut)
