@@ -292,7 +292,6 @@ loadTbl = load(permFile)
 print("Scanning...")
 local shutdwn = false
 while shutdwn == false do
-  shutdwn = false
   scan(loadTbl)
   Psleep(checkTime)
   if Sshutdwn == true then
@@ -302,6 +301,10 @@ while shutdwn == false do
     if Ppassw == password then
       shutdwn = true
       clearBar()
+    else
+      print("Wrong Password!")
+      Sshutdwn = false
+      sleep(5)
     end
   end
 end

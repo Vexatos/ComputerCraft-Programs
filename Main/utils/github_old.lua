@@ -104,51 +104,50 @@ if sCommand == "get" then
     end
 
 elseif sCommand == "run" then
-  if string.find(tArgs[2],"/") then
-    if #tArgs >= 2 then
-    local sPath = tArgs[2]
-
-    local res = getFull(sPath)
-    if res then
-      local func, err = loadstring(res)
-      if not func then
-        printError( err )
-        return
-      end
-      setfenv(func, getfenv())
-      local success, msg = pcall(func, unpack(tArgs, 3))
-      if not success then
-        printError( msg )
-      end
-    end
-    else
-      printUsage()
+  if #tArgs >= 3 then
+  local sPath = tArgs[2]
+  
+  local res = getFull(sPath)
+  if res then
+    local func, err = loadstring(res)
+    if not func then
+      printError( err )
       return
     end
+    setfenv(func, getfenv())
+    local success, msg = pcall(func, unpack(tArgs, 3))
+    if not success then
+      printError( msg )
+    end
+  end
   else
-    if #tArgs >= 5 then
-      local sName = tArgs[2]
-      local sRepo = tArgs[3]
-      local sBranch = tArgs[4]
-      local sPath = tArgs[5]
+    printUsage()
+    return
+  end
 
-      local res = get(sName,sRepo,sBranch,sPath)
-      if res then
-        local func, err = loadstring(res)
-        if not func then
-          printError( err )
-          return
-        end
-        setfenv(func, getfenv())
-        local success, msg = pcall(func, unpack(tArgs, 6))
-        if not success then
-          printError( msg )
-        end
-      end
-    else
-      printUsage()
+elseif sCommand == "runPart" then
+  if #tArgs >= 6 then
+  local sName = tArgs[2]
+  local sRepo = tArgs[3]
+  local sBranch = tArgs[4]
+  local sPath = tArgs[5]
+
+  local res = get(sName,sRepo,sBranch,sPath)
+  if res then
+    local func, err = loadstring(res)
+    if not func then
+      printError( err )
       return
     end
+    setfenv(func, getfenv())
+    local success, msg = pcall(func, unpack(tArgs, 6))
+    if not success then
+      printError( msg )
+    end
+  end
+  else
+    printUsage()
+    return
   end
 elseif sCommand == "help" then
   term.clear()
@@ -159,8 +158,7 @@ elseif sCommand == "help" then
   print ("")
   print("There is also another spelling:")
   print("github get <username> <reponame> <branch> <path> <filename>")
-  print("github run <username> <reponame> <branch> <path> [arguments]")
-  print("Note: Do not use the '/' (slash) character with this spelling!")
+  print("github runPart <username> <reponame> <branch> <path> <arguments>")
 else
     printUsage()
     return
